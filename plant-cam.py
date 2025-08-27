@@ -4,7 +4,7 @@ import time
 import toml
 import threading
 from datetime import datetime
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template, send_from_directory
 
 def load_settings():
     """Load settings from settings.toml file"""
@@ -33,12 +33,35 @@ def create_images_folder():
 
 def create_flask_app():
     """Create and configure Flask application"""
-    app = Flask(__name__)
+    # Configure Flask to look for templates in current directory
+    app = Flask(__name__, template_folder='.')
     
     @app.route('/ping', methods=['GET'])
     def ping():
         """Simple ping endpoint that returns pong"""
         return jsonify({"message": "pong"})
+    
+    @app.route('/', methods=['GET'])
+    def index():
+        """Main page showing list of captured images"""
+        images_dir = 'images'
+        if not os.path.exists(images_dir):
+            image_files = []
+        else:
+            # Get all PNG files in the images directory
+            image_files = [f for f in os.listdir(images_dir) if f.lower().endswith('.png')]
+            image_files.sort(reverse=True)  # Show newest first
+        
+        # Load template from file
+        return render_template('index.html', 
+                             image_files=image_files, 
+                             image_count=len(image_files),
+                             latest_image=image_files[0] if image_files else None)
+    
+    @app.route('/images/<filename>')
+    def serve_image(filename):
+        """Serve individual image files"""
+        return send_from_directory('images', filename)
     
     return app
 
@@ -51,6 +74,7 @@ def start_web_server(settings):
     app = create_flask_app()
     
     print(f"Starting web server on {address}:{port}")
+    print(f"Image gallery available at: http://{address}:{port}/")
     print(f"Ping endpoint available at: http://{address}:{port}/ping")
     
     # Suppress Flask's startup messages by setting host and port
