@@ -81,6 +81,7 @@ The program uses a `settings.toml` file to configure both capture and web server
 # Webcam Capture Settings
 
 [capture]
+index = 0
 # Interval between snapshots in seconds
 interval = 60
 
@@ -91,6 +92,7 @@ port = 8000
 ```
 
 **Configuration Options:**
+- `caputre.index`: The webcam device index (default: 0)
 - `capture.interval`: Time in seconds between snapshots (default: 60)
 - `server.address`: Server bind address (default: "0.0.0.0" for all interfaces)
 - `server.port`: Server port number (default: 8000)

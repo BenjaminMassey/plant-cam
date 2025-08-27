@@ -15,13 +15,13 @@ def load_settings():
     except FileNotFoundError:
         print("Warning: settings.toml not found. Using default settings.")
         return {
-            'capture': {'interval': 60},
+            'capture': {'index': 0, 'interval': 60},
             'server': {'address': '0.0.0.0', 'port': 8000}
         }
     except Exception as e:
         print(f"Warning: Error reading settings.toml: {e}. Using default settings.")
         return {
-            'capture': {'interval': 60},
+            'capture': {'index': 0, 'interval': 60},
             'server': {'address': '0.0.0.0', 'port': 8000}
         }
 
@@ -84,6 +84,7 @@ def capture_webcam_snapshots():
     """Capture webcam snapshots at configured interval"""
     # Load settings
     settings = load_settings()
+    index = settings['capture']['index']
     interval = settings['capture']['interval']
     
     print(f"Using capture interval: {interval} seconds")
@@ -95,8 +96,8 @@ def capture_webcam_snapshots():
     server_thread.daemon = True  # Thread will die when main program exits
     server_thread.start()
     
-    # Initialize the webcam (0 is usually the default camera)
-    cap = cv2.VideoCapture(0)
+    # Initialize the webcam
+    cap = cv2.VideoCapture(index)
     
     if not cap.isOpened():
         print("Error: Could not open webcam")

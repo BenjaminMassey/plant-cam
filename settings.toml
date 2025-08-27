@@ -1,6 +1,7 @@
 # Webcam Capture Settings
 
 [capture]
+index = 0
 # Interval between snapshots in seconds
 interval = 60
 
